@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body onload="load()">
+<script>
+    function load()
+    {
+        document.body.appendChild(
+            pieChart(
+                [[60,120],[180,240],[300,360]],
+                640,
+                400,
+                200,
+                200,
+                150,
+                ['red','blue','yellow'])
+        )
+    }
+    /*创建一个<svg>元素，并在其中绘制一个饼状图
+    * 参数
+    *   data:用于绘制的数字类型的数组，数组每一项都有表示饼状图的一个
+    *   width,height:SVG图形的大小，单位像素
+    *   cx,cy,r:饼状图的圆心及半径
+    *   colors:一个包含HTML颜色信息的数组，每种颜色代表饼状图每个楔的颜色
+    *   lables一个标签数组，该信息说明饼状图中每个楔代表的含义
+    * 返回：
+    *   一个保存饼状图的<svg>元素
+    *   调用者必须返回的元素插入到文档中
+    *   */
+    function pieChart(data,width,height,cx,cy,r,colors){
+        //创建一个<svg>元素，同时指定像素大小和用户坐标
+        var chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        chart.setAttribute("width", width);
+        chart.setAttribute("height", height);
+        chart.setAttribute("viewBox", "0 0 " + width + " " + height);
+
+        for(var i = 0; i < data.length; i++) {
+            var starttangle = data[i][0]/360*Math.PI*2;
+            var endangle = data[i][1]/360*Math.PI*2;
+            var path = sector(cx,cy,r,starttangle,endangle,colors[i], 0.5);
+            chart.appendChild(path); //将楔加入到饼状图中
+        }
+        return chart;
+    }
+
+    function sector(cx, cy, r, starttangle, endangle, color, opacity) {
+        //计算出楔和园相交的两个点
+        //这些计算公式都是以12点钟方向为0°,顺时针方向角度递增
+        var x1 = cx + r*Math.sin(starttangle);
+        var y1 = cy - r*Math.cos(starttangle);
+        var x2 = cx + r*Math.sin(endangle);
+        var y2 = cy - r*Math.cos(endangle);
+
+        //这个标记表示角度大于半圆,此标记在绘制SBG弧形组件的时候需要
+        var big = (endangle-starttangle>Math.PI)? 1 : 0;
+
+        //使用<svg:path>元素来描述楔
+        //要注意的是，使用ctreateElementNS()来创建该元素
+        var path = document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.onclick = function(e) {
+          console.log("svg path clicked");
+          var path = e.target;
+          path.setAttributeNS(null, "fill", "green");
+        };
+        //下面的字符串包含路径的详细信息
+        var d="M "+cx+","+cy+ //从圆心开始
+            " L "+x1+","+y1+   //画一条到(x1,y1)的线段
+            " A "+r+","+r+     //再画一条半径为r的弧
+            " 0 "+big+" 1 "+    // 弧的详细信息
+            x2+","+y2+    //弧到(x2,y2)结束
+            " Z";   //d当前路径到(cx,cy)结束
+
+        //设置<svg:path>元素的属性
+        path.setAttribute("d",d);   //设置路径
+        path.setAttribute("fill",color); //设置楔的颜色
+        path.setAttribute("fill-opacity", opacity); //设置楔的颜色
+        return path;
+    }
+
+</script>
+</body>
+</html>
