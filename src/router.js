@@ -99,6 +99,12 @@ export default new Router({
           name: "sector",
           component: () => import("@/views/amap/st-amap-sector-demo.vue"),
           meta: { title: "sector", icon: "tree" }
+        },
+        {
+          path: "azimuth",
+          name: "azimuth",
+          component: () => import("@/views/amap/st-amap-azimuth-demo.vue"),
+          meta: { title: "azimuth", icon: "tree" }
         }
       ]
     }
