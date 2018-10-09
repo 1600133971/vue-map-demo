@@ -18,7 +18,7 @@ export default {
   extends: amapBase,
   data() {
     return {
-      halfPowerAngle: 60,
+      hbwdAngle: 60,
       path: [[null], [null], [null], [null]],
       pointList: [
         [121.59996, 31.197646],
@@ -27,7 +27,7 @@ export default {
         [121.57996, 31.237646]
       ],
       starCenter: [this.lng, this.lat],
-      angleList: [
+      azimuthAngleList: [
         [0, 120, 240],
         [60, 180, 300],
         [30, 150, 240],
@@ -55,7 +55,7 @@ export default {
       svg.setAttribute("viewBox", "0 0 " + size.width + " " + size.height);
 
       for (var j = 0; j < this.pointList.length; j++) {
-        for (var i = 0; i < this.angleList[j].length; i++) {
+        for (var i = 0; i < this.azimuthAngleList[j].length; i++) {
           let p = document.createElementNS(xmlns, "path");
           p.onclick = function() {
             console.log("svg path clicked");
@@ -88,12 +88,12 @@ export default {
       for (var j = 0; j < this.pointList.length; j++) {
         let center = this.map.lngLatToContainer(this.pointList[j]);
 
-        for (var i = 0; i < this.angleList[j].length; i++) {
+        for (var i = 0; i < this.azimuthAngleList[j].length; i++) {
           var starttangle = angleToRadian(
-            this.angleList[j][i] - this.halfPowerAngle / 2
+            this.azimuthAngleList[j][i] - this.hbwdAngle / 2
           );
           var endangle = angleToRadian(
-            this.angleList[j][i] + this.halfPowerAngle / 2
+            this.azimuthAngleList[j][i] + this.hbwdAngle / 2
           );
 
           //计算出楔和园相交的两个点

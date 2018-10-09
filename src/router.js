@@ -105,6 +105,12 @@ export default new Router({
           name: "azimuth",
           component: () => import("@/views/amap/st-amap-azimuth-demo.vue"),
           meta: { title: "azimuth", icon: "tree" }
+        },
+        {
+          path: "siteinfo",
+          name: "siteinfo",
+          component: () => import("@/views/amap/st-amap-siteinfo-demo.vue"),
+          meta: { title: "siteinfo", icon: "tree" }
         }
       ]
     }

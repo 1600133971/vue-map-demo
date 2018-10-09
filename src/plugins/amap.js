@@ -9,6 +9,7 @@ import stAmapCanvas from "@/components/amap/st-amap-canvas.vue";
 import stAmapSvg from "@/components/amap/st-amap-svg.vue";
 import stAmapSector from "@/components/amap/st-amap-sector.vue";
 import stAmapAzimuth from "@/components/amap/st-amap-azimuth.vue";
+import stAmapSiteinfo from "@/components/amap/st-amap-siteinfo.vue";
 
 Vue.component("st-amap", stAmap);
 Vue.component("st-amap-position", stAmapPosition);
@@ -19,3 +20,4 @@ Vue.component("st-amap-canvas", stAmapCanvas);
 Vue.component("st-amap-svg", stAmapSvg);
 Vue.component("st-amap-sector", stAmapSector);
 Vue.component("st-amap-azimuth", stAmapAzimuth);
+Vue.component("st-amap-siteinfo", stAmapSiteinfo);
