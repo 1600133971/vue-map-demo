@@ -1,14 +1,17 @@
 <template>
-  <el-container>
-    <div :id="id" class="st-map-siteinfo">正在加载数据 ...</div>
+  <el-container style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+    <el-main style="height: 100%;">
+      <div :id="id" class="st-map-siteinfo">正在加载数据 ...</div>
+    </el-main>
+    <el-aside width="400px" style="height: 100%;">
+    </el-aside>
   </el-container>
 </template>
 
 <style lang="css">
 .st-map-siteinfo {
-  width: 800px;
-  height: 800px;
-  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 </style>
 
@@ -36,7 +39,11 @@ export default {
 
         [121.57996, 31.237646, 30, 65],
         [121.57996, 31.237646, 150, 65],
-        [121.57996, 31.237646, 240, 65]
+        [121.57996, 31.237646, 240, 65],
+
+        [121.55996, 31.257646, 0, 65],
+        [121.55996, 31.257646, 140, 65],
+        [121.55996, 31.257646, 200, 65]
       ],
       starCenter: [this.lng, this.lat],
       radius: 30,
@@ -95,59 +102,62 @@ export default {
       this.map.add(customLayer);
     },
     onRender() {
+      for (var j = 0; j < this.pointList.length; j++) {
+        let currentRadius =
+          this.map.getZoom() > 10
+            ? (this.radius * (this.map.getZoom() - 10)) / 6
+            : 1;
+        let d = this.computePath(
+          this.pointList[j][0],
+          this.pointList[j][1],
+          currentRadius,
+          this.pointList[j][2],
+          this.pointList[j][3]
+        );
+        this.path[j].setAttribute("d", d);
+      }
+    },
+    computePath(lng, lat, radius, azimuth, hbwd) {
       let angleToRadian = angle => {
         return (angle * Math.PI) / 180;
       };
+      let center = this.map.lngLatToContainer([lng, lat]);
 
-      let currentRadius = (this.radius * (this.map.getZoom() - 3)) / 12;
+      var starttangle = angleToRadian(azimuth - hbwd / 2);
+      var endangle = angleToRadian(azimuth + hbwd / 2);
 
-      for (var j = 0; j < this.pointList.length; j++) {
-        let center = this.map.lngLatToContainer([
-          this.pointList[j][0],
-          this.pointList[j][1]
-        ]);
+      //计算出楔和园相交的两个点
+      //这些计算公式都是以12点钟方向为0°,顺时针方向角度递增
+      var x1 = center.x + radius * Math.sin(starttangle);
+      var y1 = center.y - radius * Math.cos(starttangle);
+      var x2 = center.x + radius * Math.sin(endangle);
+      var y2 = center.y - radius * Math.cos(endangle);
 
-        var starttangle = angleToRadian(
-          this.pointList[j][2] - this.pointList[j][3] / 2
-        );
-        var endangle = angleToRadian(
-          this.pointList[j][2] + this.pointList[j][3] / 2
-        );
+      //这个标记表示角度大于半圆,此标记在绘制SBG弧形组件的时候需要
+      var big = endangle - starttangle > Math.PI ? 1 : 0;
 
-        //计算出楔和园相交的两个点
-        //这些计算公式都是以12点钟方向为0°,顺时针方向角度递增
-        var x1 = center.x + currentRadius * Math.sin(starttangle);
-        var y1 = center.y - currentRadius * Math.cos(starttangle);
-        var x2 = center.x + currentRadius * Math.sin(endangle);
-        var y2 = center.y - currentRadius * Math.cos(endangle);
-
-        //这个标记表示角度大于半圆,此标记在绘制SBG弧形组件的时候需要
-        var big = endangle - starttangle > Math.PI ? 1 : 0;
-
-        //下面的字符串包含路径的详细信息
-        var d =
-          "M " +
-          center.x +
-          "," +
-          center.y + //从圆心开始
-          " L " +
-          x1 +
-          "," +
-          y1 + //画一条到(x1,y1)的线段
-          " A " +
-          currentRadius +
-          "," +
-          currentRadius + //再画一条半径为r的弧
-          " 0 " +
-          big +
-          " 1 " + // 弧的详细信息
-          x2 +
-          "," +
-          y2 + //弧到(x2,y2)结束
-          " Z"; //d当前路径到(cx,cy)结束
-
-        this.path[j].setAttribute("d", d);
-      }
+      //下面的字符串包含路径的详细信息
+      var d =
+        "M " +
+        center.x +
+        "," +
+        center.y + //从圆心开始
+        " L " +
+        x1 +
+        "," +
+        y1 + //画一条到(x1,y1)的线段
+        " A " +
+        radius +
+        "," +
+        radius + //再画一条半径为r的弧
+        " 0 " +
+        big +
+        " 1 " + // 弧的详细信息
+        x2 +
+        "," +
+        y2 + //弧到(x2,y2)结束
+        " Z"; //d当前路径到(cx,cy)结束
+      return d;
     }
   }
 };

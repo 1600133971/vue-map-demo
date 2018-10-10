@@ -19,3 +19,23 @@ npm run build
 ```
 npm run lint
 ```
+```
+{
+    "editor.fontSize": 12,
+    "editor.fontFamily": "'DejaVu Sans Mono'",
+    "editor.tabSize": 2,
+    "eslint.autoFixOnSave": true,
+    "eslint.validate": [
+        "javascript",{
+            "language": "vue",
+            "autoFix": true
+        },"html",
+        "vue"
+    ],
+    "editor.renderWhitespace": "all",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.scrollback": 100000,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+}
+```
