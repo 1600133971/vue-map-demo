@@ -111,6 +111,12 @@ export default new Router({
           name: "siteinfo",
           component: () => import("@/views/amap/st-amap-siteinfo-demo.vue"),
           meta: { title: "siteinfo", icon: "tree" }
+        },
+        {
+          path: "jsonselect",
+          name: "jsonselect",
+          component: () => import("@/views/amap/st-amap-jsonselect-demo.vue"),
+          meta: { title: "jsonselect", icon: "tree" }
         }
       ]
     }

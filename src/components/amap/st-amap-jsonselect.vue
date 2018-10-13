@@ -4,6 +4,27 @@
       <div :id="id" class="st-map-siteinfo">正在加载数据 ...</div>
     </el-main>
     <el-aside width="400px" style="height: 100%;">
+      <el-table
+      :data="tableData"
+      highlight-current-row
+      style="width: 100%">
+        <el-table-column
+          prop="lng"
+          label="经度">
+        </el-table-column>
+        <el-table-column
+          prop="lat"
+          label="纬度">
+        </el-table-column>
+        <el-table-column
+          prop="azimuth"
+          label="方位角">
+        </el-table-column>
+        <el-table-column
+          prop="hbwd"
+          label="水平波瓣角">
+        </el-table-column>
+      </el-table>
     </el-aside>
   </el-container>
 </template>
@@ -17,49 +38,29 @@
 
 <script>
 import amapBase from "./st-amap-base.js";
+import json from "@/assets/test.json";
 export default {
   extends: amapBase,
   data() {
     return {
+      tableData: json,
       hbwdAngle: 60,
       path: [],
-      pointList: [
-        //[lng, lat, azimuth, hbwd],...
-        [121.59996, 31.197646, 0, 65],
-        [121.59996, 31.197646, 120, 65],
-        [121.59996, 31.197646, 240, 65],
-
-        [121.61996, 31.217646, 60, 65],
-        [121.61996, 31.217646, 180, 65],
-        [121.61996, 31.217646, 300, 65],
-
-        [121.63996, 31.237646, 30, 65],
-        [121.63996, 31.237646, 150, 65],
-        [121.63996, 31.237646, 240, 65],
-
-        [121.57996, 31.237646, 30, 65],
-        [121.57996, 31.237646, 150, 65],
-        [121.57996, 31.237646, 240, 65],
-
-        [121.55996, 31.257646, 0, 65],
-        [121.55996, 31.257646, 140, 65],
-        [121.55996, 31.257646, 200, 65]
-      ],
       starCenter: [this.lng, this.lat],
       radius: 30,
       colorList: [
-        "red", //0-30
-        "blue", // 30-60
-        "green", // 60-90
-        "blue", //90-120
-        "red", //120-150
-        "cyan", // 150-180
-        "red", // 180-210
-        "blue", // 210-240
-        "orange", // 240-270
-        "red", // 270-300
-        "blue", // 300-330
-        "black" // 330-360
+        "Crimson", //0-30
+        "Blue", // 30-60
+        "Indigo", // 60-90
+        "Red", //90-120
+        "Navy", //120-150
+        "DarkGreen", // 150-180
+        "Aquamarine", // 180-210
+        "Fuchsia", // 210-240
+        "Orange", // 240-270
+        "BlueViolet", // 270-300
+        "Brown", // 300-330
+        "Black" // 330-360
       ]
     };
   },
@@ -79,13 +80,13 @@ export default {
         return this.colorList[Math.floor(azimuth / 30)];
       };
 
-      for (let j = 0; j < this.pointList.length; j++) {
+      for (let j = 0; j < this.tableData.length; j++) {
         let p = document.createElementNS(xmlns, "path");
         p.onclick = function() {
           console.log("svg path clicked");
         };
         let styleText = [];
-        styleText.push("fill:" + azimuthToColor(this.pointList[j][2]));
+        styleText.push("fill:" + azimuthToColor(this.tableData[j].azimuth));
         styleText.push("fill-opacity:0.5");
         p.style.cssText = styleText.join(";");
 
@@ -94,7 +95,7 @@ export default {
       }
 
       let customLayer = new this.AMap.CustomLayer(svg, {
-        zooms: [3, 18],
+        zooms: [3, 20],
         alwaysRender: true,
         zIndex: 300
       });
@@ -102,17 +103,17 @@ export default {
       this.map.add(customLayer);
     },
     onRender() {
-      for (var j = 0; j < this.pointList.length; j++) {
+      for (var j = 0; j < this.tableData.length; j++) {
         let currentRadius =
           this.map.getZoom() > 10
             ? (this.radius * (this.map.getZoom() - 10)) / 6
             : 1;
         let d = this.computePath(
-          this.pointList[j][0],
-          this.pointList[j][1],
+          this.tableData[j].lng,
+          this.tableData[j].lat,
           currentRadius,
-          this.pointList[j][2],
-          this.pointList[j][3]
+          this.tableData[j].azimuth,
+          this.tableData[j].hbwd
         );
         this.path[j].setAttribute("d", d);
       }
