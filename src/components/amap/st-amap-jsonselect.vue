@@ -3,10 +3,11 @@
     <el-main style="height: 100%;">
       <div :id="id" class="st-map-siteinfo">正在加载数据 ...</div>
     </el-main>
-    <el-aside width="400px" style="height: 100%;">
+    <el-aside width="500px" style="height: 100%;">
       <el-table
       :data="tableData"
       highlight-current-row
+      @current-change="handleCurrentChange"
       style="width: 100%">
         <el-table-column
           prop="lng"
@@ -25,6 +26,16 @@
           label="水平波瓣角">
         </el-table-column>
       </el-table>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentPage"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="pagesize"
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
     </el-aside>
   </el-container>
 </template>
@@ -61,7 +72,10 @@ export default {
         "BlueViolet", // 270-300
         "Brown", // 300-330
         "Black" // 330-360
-      ]
+      ],
+      currentRow: null,
+      currentPage: 1,
+      pagesize: 20
     };
   },
   methods: {
@@ -158,6 +172,15 @@ export default {
         y2 + //弧到(x2,y2)结束
         " Z"
       ); //d当前路径到(cx,cy)结束
+    },
+    handleCurrentChange(val) {
+      this.currentRow = val;
+    },
+    handleSizeChange: function(size) {
+      this.pagesize = size;
+    },
+    handleCurrentPage: function(currentPage) {
+      this.currentPage = currentPage;
     }
   }
 };
